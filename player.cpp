@@ -320,7 +320,7 @@ void Player::showAlbumsContextMenu(const QPoint &point)
     if (_ui->albums->itemAt(point)
         && _albumsMenu->exec(_ui->albums->mapToGlobal(point)) == _albumToPlaylistAction)
     {
-        addToPlaylist(DataBase::instance()->tracks(ALL, _ui->artists->itemAt(point)->text()));
+        addToPlaylist(DataBase::instance()->tracks(ALL, _ui->albums->itemAt(point)->text()));
     }
 }
 
