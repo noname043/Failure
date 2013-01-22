@@ -187,7 +187,7 @@ void Player::play()
 {
     if (_player->state() != Phonon::PausedState || _playingNextOrPrev)
     {
-        _playingNextOrPrev = false;
+        //_playingNextOrPrev = false;
         if (_ui->tabWidget->currentWidget() == _ui->libraryTab)
         {
             Phonon::MediaSource source(_libTracks[_ui->tracks->currentRow()]->fileName());
@@ -209,8 +209,11 @@ void Player::stateChanged(Phonon::State newState, Phonon::State oldState)
 {
     if (newState == Phonon::StoppedState || newState == Phonon::PausedState)
     {
-        if (oldState == Phonon::PlayingState && !_isStopped)
+        if (oldState == Phonon::PlayingState && !_isStopped && !_playingNextOrPrev)
+        {
+            _playingNextOrPrev = false;
             playNext();
+        }
         else
         {
             _ui->playButton->show();
