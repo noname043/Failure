@@ -424,6 +424,7 @@
     <property name="title">
      <string>Player</string>
     </property>
+    <addaction name="actionClear_playlist"/>
     <addaction name="actionSave_playlist"/>
     <addaction name="actionLoad_playlist"/>
     <addaction name="separator"/>
@@ -462,6 +463,11 @@
   <action name="actionAdd_directory">
    <property name="text">
     <string>Add directory</string>
+   </property>
+  </action>
+  <action name="actionClear_playlist">
+   <property name="text">
+    <string>Clear playlist</string>
    </property>
   </action>
  </widget>

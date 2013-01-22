@@ -25,7 +25,6 @@ private slots:
 
     void playPrevious();
     void play();
-    void pause() {}
     void stop();
     void playNext();
 

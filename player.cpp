@@ -47,6 +47,7 @@ Player::Player(QWidget *parent):
     connect(_ui->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(_ui->actionAdd_directory, SIGNAL(triggered()), this, SLOT(addDirToLibrary()));
     connect(_ui->actionAdd_files, SIGNAL(triggered()), this, SLOT(addFilesToLibrary()));
+    connect(_ui->actionClear_playlist, SIGNAL(triggered()), this, SLOT(clearPlaylist()));
     connect(_ui->actionLoad_playlist, SIGNAL(triggered()), this, SLOT(loadPlaylist()));
     connect(_ui->actionSave_playlist, SIGNAL(triggered()), this, SLOT(savePlaylist()));
     connect(_ui->nextButton, SIGNAL(clicked()), this, SLOT(playNext()));
@@ -364,6 +365,7 @@ void Player::clearPlaylist()
     }
     _plistTracks.clear();
     _ui->playlist->clearContents();
+    _ui->playlist->setRowCount(0);
 }
 
 void Player::trackFinished()
