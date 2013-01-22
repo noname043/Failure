@@ -186,7 +186,7 @@ void Player::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void Player::play()
 {
-    if (_player->state() != Phonon::PausedState || _playingNextOrPrev)
+    if (_player->state() != Phonon::PausedState)
     {
         //_playingNextOrPrev = false;
         if (_ui->tabWidget->currentWidget() == _ui->libraryTab)
@@ -268,7 +268,6 @@ void Player::playPrevious()
     if (r <= 0)
         return;
 
-    _playingNextOrPrev = true;
     widget->setCurrentCell(--r, 0);
     play();
 }
@@ -297,7 +296,6 @@ void Player::playNext()
     if (r >= playlist->size())
         return;
 
-    _playingNextOrPrev = true;
     widget->setCurrentCell(r, 0);
     play();
 }

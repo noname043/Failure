@@ -60,7 +60,6 @@ private:
     QList<Track*> _libTracks;
     QList<Track*> _plistTracks;
     bool _isStopped;
-    bool _playingNextOrPrev;
 
     QAction *_artistToPlaylistAction;
     QMenu *_artistsMenu;
