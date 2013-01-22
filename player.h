@@ -9,6 +9,8 @@
 #include "ui_player.h"
 #include "track.h"
 
+#define RECENTPLAYLIST  DATADIR + "/recent.plst"
+
 class Player: public QMainWindow
 {
     Q_OBJECT

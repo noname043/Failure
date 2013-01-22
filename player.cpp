@@ -75,10 +75,13 @@ Player::Player(QWidget *parent):
 
     _allArtists = _ui->artists->item(0);
     _allAlbums = _ui->albums->item(0);
+
+    loadPlaylist(RECENTPLAYLIST);
 }
 
 Player::~Player()
 {
+    savePlaylist(RECENTPLAYLIST);
     delete _ui;
     delete _player;
     DataBase::destroy();
