@@ -2,3 +2,9 @@ build
 Makefile*
 *.pro.user
 todo.txt
+debug
+release
+ui_*
+moc_*
+res_*
+object_script*

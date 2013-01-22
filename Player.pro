@@ -38,4 +38,5 @@ RESOURCES += \
 
 OTHER_FILES += \
     todo.txt \
-    TODO
+    TODO \
+    .gitignore

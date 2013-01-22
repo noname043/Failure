@@ -191,7 +191,9 @@ void Player::updateTracks()
 void Player::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
     Q_UNUSED(reason);
-    this->setVisible(!this->isVisible());
+    if (this->isHidden())
+        this->show();
+    else this->hide();
 }
 
 void Player::play()
@@ -234,6 +236,7 @@ void Player::stateChanged(Phonon::State newState, Phonon::State oldState)
         _ui->artistLabel->setText(track->artist());
         _ui->playButton->hide();
         _ui->pauseButton->show();
+        _trayIcon->setToolTip(QString("%1 - %2").arg(track->artist(), track->title()));
         //this->adjustSize();
     }
     else if (newState == Phonon::ErrorState)
