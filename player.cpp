@@ -70,6 +70,7 @@ Player::Player(QWidget *parent):
     connect(_player, SIGNAL(stateChanged(Phonon::State,Phonon::State)), this, SLOT(stateChanged(Phonon::State,Phonon::State)));
     connect(_player, SIGNAL(tick(qint64)), this, SLOT(tick(qint64)));
     connect(_player, SIGNAL(totalTimeChanged(qint64)), this, SLOT(totalTimeChanged(qint64)));
+    connect(_player, SIGNAL(finished()), this, SLOT(trackFinished()));
 
     _allArtists = _ui->artists->item(0);
     _allAlbums = _ui->albums->item(0);
@@ -209,16 +210,8 @@ void Player::stateChanged(Phonon::State newState, Phonon::State oldState)
 {
     if (newState == Phonon::StoppedState || newState == Phonon::PausedState)
     {
-        if (oldState == Phonon::PlayingState && !_isStopped && !_playingNextOrPrev)
-        {
-            _playingNextOrPrev = false;
-            playNext();
-        }
-        else
-        {
-            _ui->playButton->show();
-            _ui->pauseButton->hide();
-        }
+        _ui->playButton->show();
+        _ui->pauseButton->hide();
     }
     else if (newState == Phonon::PlayingState)
     {
@@ -234,6 +227,8 @@ void Player::stateChanged(Phonon::State newState, Phonon::State oldState)
     }
     else if (newState == Phonon::ErrorState)
     {
+        _ui->playButton->show();
+        _ui->pauseButton->hide();
         QMessageBox::warning(this, tr("Error!"), _player->errorString());
     }
 }
@@ -371,4 +366,10 @@ void Player::clearPlaylist()
     }
     _plistTracks.clear();
     _ui->playlist->clearContents();
+}
+
+void Player::trackFinished()
+{
+    if (!_isStopped)
+        playNext();
 }

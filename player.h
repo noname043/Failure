@@ -37,6 +37,7 @@ private slots:
     void stateChanged(Phonon::State newState, Phonon::State oldState);
     void totalTimeChanged(qint64 newTotalTime);
     void tick(qint64 time);
+    void trackFinished();
 
     void showArtistsContextMenu(const QPoint &point);
     void showAlbumsContextMenu(const QPoint &point);
