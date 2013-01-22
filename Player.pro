@@ -37,4 +37,5 @@ RESOURCES += \
     mime/freedesktopmime.qrc
 
 OTHER_FILES += \
-    todo.txt
+    todo.txt \
+    TODO
