@@ -106,11 +106,17 @@ void Player::fixHeader(QHeaderView *header)
 void Player::addFilesToLibrary()
 {
     Track *track;
+    ProgressDialog progress(this);
+    progress.show();
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Select files"));
     for (int i = 0; i < files.size(); ++i)
     {
-        track = new Track(files[i]);
-        DataBase::instance()->addTrack(track);
+        if (DataBase::isSupported(files[i]))
+        {
+            track = new Track(files[i]);
+            DataBase::instance()->addTrack(track);
+        }
+        progress.setValue(i+1, files.size());
     }
 }
 

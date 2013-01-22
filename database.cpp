@@ -1,9 +1,9 @@
 #include "database.h"
 #include <QFile>
 #include <phonon/BackendCapabilities>
-#include "mime/freedesktopmime.h"
 
 DataBase *DataBase::_instance = 0;
+QFreeDesktopMime *DataBase::_mime;
 
 DataBase::DataBase()
 {
@@ -25,7 +25,10 @@ DataBase::~DataBase()
 DataBase *DataBase::instance()
 {
     if (!_instance)
+    {
         _instance = new DataBase;
+        _mime = new QFreeDesktopMime(_instance);
+    }
     return _instance;
 }
 
@@ -33,6 +36,8 @@ void DataBase::destroy()
 {
     if (_instance)
     {
+        delete _mime;
+        _mime = 0;
         delete _instance;
         _instance = 0;
     }
@@ -286,13 +291,10 @@ void DataBase::addDirectory(const QString &dirName)
 
 QStringList DataBase::audioFiles(const QDir &dir)
 {
-    QFreeDesktopMime mime;
-    QString mimeType;
     QStringList files = dir.entryList(QDir::Files);
     for (int i = 0; i < files.size(); ++i)
     {
-        mimeType = mime.fromFileName(files[i]);
-        if (mimeType.split('/')[0] == "audio" && Phonon::BackendCapabilities::isMimeTypeAvailable(mimeType))
+        if (isSupported(files[i]))
             files[i].prepend(dir.absolutePath() + "/");
         else files.removeAt(i--);
     }
@@ -306,6 +308,13 @@ QStringList DataBase::audioFilesFromSubDirs(const QDir &dir)
     for (int i = 0; i < dirs.size(); ++i)
         files.append(audioFilesFromSubDirs(QDir(QString("%1/%2").arg(dir.absolutePath(), dirs[i]))));
     return files;
+}
+
+bool DataBase::isSupported(const QString &fileName)
+{
+    QString mimeType = _mime->fromFileName(fileName);
+    return (mimeType.split('/')[0] == "audio" &&
+            Phonon::BackendCapabilities::isMimeTypeAvailable(mimeType));
 }
 
 bool DataBase::hasAlbum(const QString &album) const

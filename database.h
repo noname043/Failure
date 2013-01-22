@@ -6,6 +6,7 @@
 #include <QStringList>
 #include "stringmanager.h"
 #include "track.h"
+#include "mime/freedesktopmime.h"
 
 #define DATADIR     QString("%1/%2").arg(QDir::homePath(), "Player")
 #define ARTISTSFILE DATADIR + "/artists.dat"
@@ -71,6 +72,8 @@ public:
     QList<Track*> tracks(const QString &artist, const QString &album) const;
     Track *track(const QString &fileName);
 
+    static bool isSupported(const QString &fileName);
+
 public slots:
     void load();
     void addTrack(Track *track);
@@ -96,6 +99,7 @@ private:
 
 private:
     static DataBase *_instance;
+    static QFreeDesktopMime *_mime;
     QStringList _artists;
     QList<AlbumData*> _albums;
     QList<Track*> _tracks;
