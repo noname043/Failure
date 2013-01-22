@@ -18,8 +18,10 @@ public:
     ~Player();
 
 private slots:
-    void savePlaylist() {}
-    void loadPlaylist() {}
+    void savePlaylist();
+    void loadPlaylist();
+    bool savePlaylist(const QString &fileName);
+    bool loadPlaylist(const QString &fileName);
     void addFilesToLibrary();
     void addDirToLibrary();
 

@@ -209,6 +209,7 @@ void Player::play()
 
 void Player::stateChanged(Phonon::State newState, Phonon::State oldState)
 {
+    Q_UNUSED(oldState);
     if (newState == Phonon::StoppedState || newState == Phonon::PausedState)
     {
         _ui->playButton->show();
@@ -321,7 +322,8 @@ void Player::showAlbumsContextMenu(const QPoint &point)
     if (_ui->albums->itemAt(point)
         && _albumsMenu->exec(_ui->albums->mapToGlobal(point)) == _albumToPlaylistAction)
     {
-        addToPlaylist(DataBase::instance()->tracks(ALL, _ui->albums->itemAt(point)->text()));
+        addToPlaylist(DataBase::instance()->tracks(_ui->artists->currentItem()->text(),
+                                                   _ui->albums->itemAt(point)->text()));
     }
 }
 
@@ -372,4 +374,61 @@ void Player::trackFinished()
 {
     if (!_isStopped)
         playNext();
+}
+
+void Player::savePlaylist()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Select file"), QDir::homePath(), "*.plst");
+    if (fileName.isEmpty())
+        return;
+    if (!fileName.endsWith(".plst"))
+        fileName.append(".plst");
+    if (!savePlaylist(fileName))
+        QMessageBox::critical(this, tr("Error!"), tr("Failed to save playlist!"));
+}
+
+bool Player::savePlaylist(const QString &fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly))
+        return false;
+
+    for (int i = 0; i < _plistTracks.size(); ++i)
+        file.write(_plistTracks[i]->fileName().toUtf8() + '\n');
+    file.close();
+    return true;
+}
+
+void Player::loadPlaylist()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Select file"), QDir::homePath(), "*.plst");
+    if (fileName.isEmpty())
+        return;
+    clearPlaylist();
+    if (!loadPlaylist(fileName))
+        QMessageBox::critical(this, tr("Error!"), tr("Failed to load playlist!"));
+}
+
+bool Player::loadPlaylist(const QString &fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly))
+        return false;
+
+    QTextStream stream(&file);
+    stream.setCodec("UTF-8");
+    Track *track = 0;
+    while (!stream.atEnd())
+    {
+        QString trackFileName = stream.readLine();
+        if (!trackFileName.isEmpty())
+        {
+            track = DataBase::instance()->track(trackFileName);
+            if (!track)
+                track = new Track(trackFileName);
+            addToPlaylist(track);
+        }
+    }
+    file.close();
+    return true;
 }

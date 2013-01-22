@@ -62,6 +62,25 @@ bool DataBase::hasTrack(const Track *track) const
     return false;
 }
 
+bool DataBase::hasTrack(const QString &fileName)
+{
+    return (track(fileName) != 0);
+}
+
+Track *DataBase::track(const QString &fileName)
+{
+    for (int i = 0; i < _tracks.size(); ++i)
+    {
+#ifdef Q_WS_WIN
+        if (!QString::compare(fileName, _tracks[i]->fileName(), Qt::CaseInsensitive))
+#else
+        if (!QString::compare(fileName, _tracks[i]->fileName()))
+#endif
+            return _tracks[i];
+    }
+    return 0;
+}
+
 void DataBase::addTrack(Track *track)
 {
     if (hasTrack(track))

@@ -64,10 +64,12 @@ public:
     bool hasArtist(const QString &artist) const { return _artists.contains(artist, Qt::CaseInsensitive); }
     bool hasAlbum(const QString &album) const;
     bool hasTrack(const Track *track) const;
+    bool hasTrack(const QString &fileName);
 
     QStringList artists() const { return _artists; }
     QStringList albums(const QString &artist) const;
     QList<Track*> tracks(const QString &artist, const QString &album) const;
+    Track *track(const QString &fileName);
 
 public slots:
     void load();
