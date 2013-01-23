@@ -6,6 +6,7 @@
 #include "track.h"
 #include "progressdialog.h"
 #include "settings.h"
+#include "global.h"
 
 Player::Player(QWidget *parent):
     QMainWindow(parent),
@@ -27,10 +28,13 @@ Player::Player(QWidget *parent):
     _playPrevAction(new QAction(tr("Play previous"), this)),
     _stopAction(new QAction(tr("Stop"), this)),
     _trayMenu(new QMenu(this)),
-    _lastFMDialog(new LastFMAuthDialog(this))
+    _lastFMDialog(new LastFMAuthDialog(this)),
+    _scrobbler(new lastfm::Audioscrobbler("tst")),
+    _lfmTrack(new lastfm::MutableTrack)
 {
     _ui->setupUi(this);
     this->setWindowIcon(QIcon(":/icon.png"));
+    this->setWindowTitle(qApp->applicationName());
     _ui->pauseButton->setHidden(true);
     fixHeader(_ui->tracks->horizontalHeader());
     fixHeader(_ui->playlist->horizontalHeader());
@@ -105,6 +109,8 @@ Player::Player(QWidget *parent):
     connect(_player, SIGNAL(finished()), this, SLOT(trackFinished()));
     connect(_ui->actionSettings, SIGNAL(triggered()), _lastFMDialog, SLOT(show()));
     connect(_ui->actionScrobbling, SIGNAL(toggled(bool)), this, SLOT(scrobblingToggled(bool)));
+    connect(Settings::instance(), SIGNAL(lastFMUserChanged(QString)), this, SLOT(lastFMUserChanged(QString)));
+    connect(Settings::instance(), SIGNAL(lastFMSessionChanged(QString)), this, SLOT(lastFMSessionChanged(QString)));
 
     _allArtists = _ui->artists->item(0);
     _allArtists->setText(ALL);
@@ -112,6 +118,9 @@ Player::Player(QWidget *parent):
     _allAlbums->setText(ALL);
 
     loadPlaylist(RECENTPLAYLIST);
+
+    _ui->actionScrobbling->setChecked(Settings::instance()->isScrobblingEnabled());
+    _ui->actionSettings->setEnabled(Settings::instance()->isScrobblingEnabled());
 }
 
 Player::~Player()
@@ -120,6 +129,9 @@ Player::~Player()
     delete _ui;
     delete _player;
     DataBase::destroy();
+    Settings::destroy();
+    delete _scrobbler;
+    delete _lfmTrack;
 }
 
 void Player::fixHeader(QHeaderView *header)
@@ -294,6 +306,20 @@ void Player::totalTimeChanged(qint64 newTotalTime)
 {
     QDateTime time = QDateTime::fromMSecsSinceEpoch(newTotalTime);
     _ui->totalTimeLabel->setText(time.toString("m:ss"));
+
+    if (!Settings::instance()->isScrobblingEnabled())
+        return;
+
+    Track *track = 0;
+    if (_ui->tabWidget->currentWidget() == _ui->libraryTab)
+        track = _libTracks[_ui->tracks->currentRow()];
+    else track = _plistTracks[_ui->playlist->currentRow()];
+    _lfmTrack->setArtist(track->artist());
+    _lfmTrack->setAlbum(track->album());
+    _lfmTrack->setTitle(track->title());
+    _lfmTrack->setTrackNumber(track->track());
+    _lfmTrack->setDuration(newTotalTime/1000);
+    _scrobbler->nowPlaying(*_lfmTrack);
 }
 
 void Player::tick(qint64 time)
@@ -428,7 +454,11 @@ void Player::clearPlaylist()
 void Player::trackFinished()
 {
     if (!_isStopped)
+    {
+        if (Settings::instance()->isScrobblingEnabled())
+            _scrobbler->cache(*_lfmTrack);
         playNext();
+    }
 }
 
 void Player::savePlaylist()
@@ -502,4 +532,14 @@ void Player::showPlaylistContextMenu(const QPoint &point)
 void Player::scrobblingToggled(bool enabled)
 {
     Settings::instance()->setScroblingEnabled(enabled);
+}
+
+void Player::lastFMUserChanged(QString user)
+{
+    lastfm::ws::Username = user;
+}
+
+void Player::lastFMSessionChanged(QString session)
+{
+    lastfm::ws::SessionKey = session;
 }

@@ -30,6 +30,7 @@ void LastFMAuthDialog::setLoggedIn()
     _ui->loginButton->setEnabled(false);
     _ui->finishLoginButton->setEnabled(false);
     _ui->logoutButton->setEnabled(true);
+    _ui->username->setEnabled(false);
 }
 
 void LastFMAuthDialog::setLoggedOut()
@@ -37,6 +38,7 @@ void LastFMAuthDialog::setLoggedOut()
     _ui->loginButton->setEnabled(true);
     _ui->finishLoginButton->setEnabled(false);
     _ui->logoutButton->setEnabled(false);
+    _ui->username->setEnabled(true);
 }
 
 void LastFMAuthDialog::login()
@@ -44,7 +46,10 @@ void LastFMAuthDialog::login()
     if (!_auth->getToken(&_errorString))
         QMessageBox::warning(this, tr("Error!"), _errorString);
     else
+    {
         _ui->loginButton->setEnabled(false);
+        _ui->username->setEnabled(false);
+    }
 }
 
 void LastFMAuthDialog::tokenReceived(bool error)
@@ -83,6 +88,7 @@ void LastFMAuthDialog::sessionReceived(bool error)
         Settings::instance()->setLastFMSession(_auth->session());
         Settings::instance()->setLastFMUser(_ui->username->text());
         setLoggedIn();
+        this->close();
     }
 }
 

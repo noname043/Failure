@@ -6,6 +6,9 @@
 #include <phonon/AudioOutput>
 #include <QListWidgetItem>
 #include <QSystemTrayIcon>
+#include <lastfm/ws.h>
+#include <lastfm/Audioscrobbler>
+#include <lastfm/MutableTrack>
 #include "ui_player.h"
 #include "track.h"
 #include "lastfmauthdialog.h"
@@ -54,6 +57,8 @@ private slots:
     //void removeTrack(Track *track);
 
     void scrobblingToggled(bool enabled);
+    void lastFMUserChanged(QString user);
+    void lastFMSessionChanged(QString session);
 
 private:
     void fixHeader(QHeaderView *header);
@@ -86,6 +91,8 @@ private:
     QMenu *_trayMenu;
 
     LastFMAuthDialog *_lastFMDialog;
+    lastfm::Audioscrobbler *_scrobbler;
+    lastfm::MutableTrack *_lfmTrack;
 };
 
 #endif // MAINWINDOW_H
