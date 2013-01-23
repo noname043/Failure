@@ -319,6 +319,7 @@ void Player::totalTimeChanged(qint64 newTotalTime)
     _lfmTrack->setTitle(track->title());
     _lfmTrack->setTrackNumber(track->track());
     _lfmTrack->setDuration(newTotalTime/1000);
+    _lfmTrack->stamp();
     _scrobbler->nowPlaying(*_lfmTrack);
 }
 
@@ -456,7 +457,11 @@ void Player::trackFinished()
     if (!_isStopped)
     {
         if (Settings::instance()->isScrobblingEnabled())
+        {
             _scrobbler->cache(*_lfmTrack);
+            _scrobbler->submit();
+            qDebug("Track scrobbled.");
+        }
         playNext();
     }
 }
