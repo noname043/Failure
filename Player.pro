@@ -34,7 +34,8 @@ FORMS    += \
     progressdialog.ui
 
 RESOURCES += \
-    mime/freedesktopmime.qrc
+    mime/freedesktopmime.qrc \
+    res.qrc
 
 OTHER_FILES += \
     todo.txt \

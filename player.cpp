@@ -28,7 +28,7 @@ Player::Player(QWidget *parent):
     _trayMenu(new QMenu(this))
 {
     _ui->setupUi(this);
-    this->setWindowIcon(qApp->style()->standardIcon(QStyle::SP_MediaPlay));
+    this->setWindowIcon(QIcon(":/icon.png"));
     _ui->pauseButton->setHidden(true);
     fixHeader(_ui->tracks->horizontalHeader());
     fixHeader(_ui->playlist->horizontalHeader());
@@ -56,7 +56,7 @@ Player::Player(QWidget *parent):
     _trayMenu->addAction(_ui->actionQuit);
 
     _trayIcon->setContextMenu(_trayMenu);
-    _trayIcon->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaPlay));
+    _trayIcon->setIcon(QIcon(":/icon.png"));
     _trayIcon->show();
 
     Phonon::createPath(_player, _audioOutput);
