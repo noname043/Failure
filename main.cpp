@@ -7,7 +7,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     a.addLibraryPath(a.applicationDirPath());
-    a.setApplicationName("Player");
+    a.setApplicationName("Failure");
+    a.setApplicationVersion("0.1");
     a.setQuitOnLastWindowClosed(false);
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));

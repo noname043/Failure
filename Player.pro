@@ -8,10 +8,10 @@ QT       += core gui phonon xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Player
+TARGET = Failure
 TEMPLATE = app
 
-LIBS += -ltag
+LIBS += -ltag -llastfm
 
 SOURCES += main.cpp \
     player.cpp \
