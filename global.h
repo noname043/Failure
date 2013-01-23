@@ -1,0 +1,7 @@
+#ifndef GLOBAL_H
+#define GLOBAL_H
+
+#define APIKEY "96a2067f733d779006764f8908da235a"
+#define APISECRET "de1d1c8fe718d37e2b6066e4900c2d02"
+
+#endif // GLOBAL_H

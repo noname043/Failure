@@ -5,6 +5,7 @@
 #include "database.h"
 #include "track.h"
 #include "progressdialog.h"
+#include "settings.h"
 
 Player::Player(QWidget *parent):
     QMainWindow(parent),
@@ -25,7 +26,8 @@ Player::Player(QWidget *parent):
     _playNextAction(new QAction(tr("Play next"), this)),
     _playPrevAction(new QAction(tr("Play previous"), this)),
     _stopAction(new QAction(tr("Stop"), this)),
-    _trayMenu(new QMenu(this))
+    _trayMenu(new QMenu(this)),
+    _lastFMDialog(new LastFMAuthDialog(this))
 {
     _ui->setupUi(this);
     this->setWindowIcon(QIcon(":/icon.png"));
@@ -101,6 +103,8 @@ Player::Player(QWidget *parent):
     connect(_player, SIGNAL(tick(qint64)), this, SLOT(tick(qint64)));
     connect(_player, SIGNAL(totalTimeChanged(qint64)), this, SLOT(totalTimeChanged(qint64)));
     connect(_player, SIGNAL(finished()), this, SLOT(trackFinished()));
+    connect(_ui->actionSettings, SIGNAL(triggered()), _lastFMDialog, SLOT(show()));
+    connect(_ui->actionScrobbling, SIGNAL(toggled(bool)), this, SLOT(scrobblingToggled(bool)));
 
     _allArtists = _ui->artists->item(0);
     _allArtists->setText(ALL);
@@ -493,4 +497,9 @@ void Player::showPlaylistContextMenu(const QPoint &point)
         _ui->playlist->removeRow(row);
         _plistTracks.removeAt(row);
     }
+}
+
+void Player::scrobblingToggled(bool enabled)
+{
+    Settings::instance()->setScroblingEnabled(enabled);
 }

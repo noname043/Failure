@@ -8,6 +8,7 @@
 #include <QSystemTrayIcon>
 #include "ui_player.h"
 #include "track.h"
+#include "lastfmauthdialog.h"
 
 #define RECENTPLAYLIST  DATADIR + "/recent.plst"
 
@@ -52,6 +53,8 @@ private slots:
     void clearPlaylist();
     //void removeTrack(Track *track);
 
+    void scrobblingToggled(bool enabled);
+
 private:
     void fixHeader(QHeaderView *header);
 
@@ -81,6 +84,8 @@ private:
     QAction *_playPrevAction;
     QAction *_stopAction;
     QMenu *_trayMenu;
+
+    LastFMAuthDialog *_lastFMDialog;
 };
 
 #endif // MAINWINDOW_H

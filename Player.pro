@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui phonon xml
+QT       += core gui phonon xml network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -19,7 +19,10 @@ SOURCES += main.cpp \
     track.cpp \
     database.cpp \
     mime/freedesktopmime.cpp \
-    progressdialog.cpp
+    progressdialog.cpp \
+    lastfmauth.cpp \
+    lastfmauthdialog.cpp \
+    settings.cpp
 
 HEADERS  += \
     player.h \
@@ -27,11 +30,16 @@ HEADERS  += \
     track.h \
     database.h \
     mime/freedesktopmime.h \
-    progressdialog.h
+    progressdialog.h \
+    lastfmauth.h \
+    lastfmauthdialog.h \
+    settings.h \
+    global.h
 
 FORMS    += \
     player.ui \
-    progressdialog.ui
+    progressdialog.ui \
+    lastfmauthdialog.ui
 
 RESOURCES += \
     mime/freedesktopmime.qrc \

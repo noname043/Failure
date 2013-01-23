@@ -437,8 +437,16 @@
     <addaction name="actionAdd_files"/>
     <addaction name="actionAdd_directory"/>
    </widget>
+   <widget class="QMenu" name="menuScrobbler">
+    <property name="title">
+     <string>Scrobbler</string>
+    </property>
+    <addaction name="actionScrobbling"/>
+    <addaction name="actionSettings"/>
+   </widget>
    <addaction name="menuPlayer"/>
    <addaction name="menuLibrary"/>
+   <addaction name="menuScrobbler"/>
   </widget>
   <action name="actionSave_playlist">
    <property name="text">
@@ -470,6 +478,22 @@
     <string>Clear playlist</string>
    </property>
   </action>
+  <action name="actionScrobbling">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Scrobbling</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -485,5 +509,22 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionScrobbling</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>actionSettings</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
