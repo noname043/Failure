@@ -9,7 +9,7 @@
 #include "track.h"
 #include "mime/freedesktopmime.h"
 
-#define DATADIR     QString("%1/%2").arg(QDir::homePath(), qApp->applicationName())
+#define DATADIR     QString("%1/.%2").arg(QDir::homePath(), qApp->applicationName())
 #define ARTISTSFILE DATADIR + "/artists.dat"
 #define ALBUMSFILE  DATADIR + "/albums.dat"
 #define TRACKSFILE  DATADIR + "/tracks.dat"
