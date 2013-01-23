@@ -45,10 +45,12 @@ private slots:
     void showArtistsContextMenu(const QPoint &point);
     void showAlbumsContextMenu(const QPoint &point);
     void showTracksContextMenu(const QPoint &point);
+    void showPlaylistContextMenu(const QPoint &point);
 
     void addToPlaylist(const Track *track);
     void addToPlaylist(const QList<Track*> &tracks);
     void clearPlaylist();
+    //void removeTrack(Track *track);
 
 private:
     void fixHeader(QHeaderView *header);
@@ -70,6 +72,8 @@ private:
     QMenu *_albumsMenu;
     QAction *_trackToPlaylistAction;
     QMenu *_tracksMenu;
+    QAction *_removeTrackAction;
+    QMenu *_playlistMenu;
 
     QAction *_playAction;
     QAction *_pauseAction;

@@ -18,6 +18,8 @@ Player::Player(QWidget *parent):
     _albumsMenu(new QMenu(this)),
     _trackToPlaylistAction(new QAction(tr("Add to playlist"), this)),
     _tracksMenu(new QMenu(this)),
+    _removeTrackAction(new QAction(tr("Remove track"), this)),
+    _playlistMenu(new QMenu(this)),
     _playAction(new QAction(tr("Play"), this)),
     _pauseAction(new QAction(tr("Pause"), this)),
     _playNextAction(new QAction(tr("Play next"), this)),
@@ -64,6 +66,7 @@ Player::Player(QWidget *parent):
     _artistsMenu->addAction(_artistToPlaylistAction);
     _albumsMenu->addAction(_albumToPlaylistAction);
     _tracksMenu->addAction(_trackToPlaylistAction);
+    _playlistMenu->addAction(_removeTrackAction);
 
     connect(_ui->actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(_ui->actionAdd_directory, SIGNAL(triggered()), this, SLOT(addDirToLibrary()));
@@ -87,6 +90,7 @@ Player::Player(QWidget *parent):
     connect(_ui->artists, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showArtistsContextMenu(const QPoint &)));
     connect(_ui->albums, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showAlbumsContextMenu(const QPoint &)));
     connect(_ui->tracks, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showTracksContextMenu(const QPoint &)));
+    connect(_ui->playlist, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showPlaylistContextMenu(const QPoint &)));
     connect(DataBase::instance(), SIGNAL(albumsUpdated()), this, SLOT(updateAlbums()));
     connect(DataBase::instance(), SIGNAL(artistsUpdated()), this, SLOT(updateArtists()));
     connect(DataBase::instance(), SIGNAL(tracksUpdated()), this, SLOT(updateTracks()));
@@ -478,4 +482,15 @@ bool Player::loadPlaylist(const QString &fileName)
     }
     file.close();
     return true;
+}
+
+void Player::showPlaylistContextMenu(const QPoint &point)
+{
+    if (_ui->playlist->currentRow() >= 0
+        && _playlistMenu->exec(_ui->playlist->mapToGlobal(point)) == _removeTrackAction)
+    {
+        int row = _ui->playlist->currentRow();
+        _ui->playlist->removeRow(row);
+        _plistTracks.removeAt(row);
+    }
 }
