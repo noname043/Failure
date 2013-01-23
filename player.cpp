@@ -17,7 +17,13 @@ Player::Player(QWidget *parent):
     _albumToPlaylistAction(new QAction(tr("Add to playlist"), this)),
     _albumsMenu(new QMenu(this)),
     _trackToPlaylistAction(new QAction(tr("Add to playlist"), this)),
-    _tracksMenu(new QMenu(this))
+    _tracksMenu(new QMenu(this)),
+    _playAction(new QAction(tr("Play"), this)),
+    _pauseAction(new QAction(tr("Pause"), this)),
+    _playNextAction(new QAction(tr("Play next"), this)),
+    _playPrevAction(new QAction(tr("Play previous"), this)),
+    _stopAction(new QAction(tr("Stop"), this)),
+    _trayMenu(new QMenu(this))
 {
     _ui->setupUi(this);
     this->setWindowIcon(qApp->style()->standardIcon(QStyle::SP_MediaPlay));
@@ -33,6 +39,21 @@ Player::Player(QWidget *parent):
     _ui->stopButton->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaStop));
     _ui->nextButton->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaSkipForward));
 
+    _playPrevAction->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaSkipBackward));
+    _playAction->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaPlay));
+    _pauseAction->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaPause));
+    _pauseAction->setVisible(false);
+    _stopAction->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaStop));
+    _playNextAction->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaSkipForward));
+    _ui->actionQuit->setIcon(qApp->style()->standardIcon(QStyle::SP_DialogCloseButton));
+    _trayMenu->addAction(_playAction);
+    _trayMenu->addAction(_pauseAction);
+    _trayMenu->addAction(_playPrevAction);
+    _trayMenu->addAction(_playNextAction);
+    _trayMenu->addAction(_stopAction);
+    _trayMenu->addAction(_ui->actionQuit);
+
+    _trayIcon->setContextMenu(_trayMenu);
     _trayIcon->setIcon(qApp->style()->standardIcon(QStyle::SP_MediaPlay));
     _trayIcon->show();
 
@@ -54,11 +75,15 @@ Player::Player(QWidget *parent):
     connect(_ui->playButton, SIGNAL(clicked()), this, SLOT(play()));
     connect(_ui->tracks, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(play()));
     connect(_ui->playlist, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(play()));
-//    connect(_ui->pauseButton, SIGNAL(clicked()), this, SLOT(pause()));
     connect(_ui->stopButton, SIGNAL(clicked()), this, SLOT(stop()));
     connect(_ui->pauseButton, SIGNAL(clicked()), _player, SLOT(pause()));
     connect(_ui->stopButton, SIGNAL(clicked()), _player, SLOT(stop()));
     connect(_ui->previousButton, SIGNAL(clicked()), this, SLOT(playPrevious()));
+    connect(_playAction, SIGNAL(triggered()), this, SLOT(play()));
+    connect(_pauseAction, SIGNAL(triggered()), _player, SLOT(pause()));
+    connect(_stopAction, SIGNAL(triggered()), _player, SLOT(stop()));
+    connect(_playNextAction, SIGNAL(triggered()), this, SLOT(playNext()));
+    connect(_playPrevAction, SIGNAL(triggered()), this, SLOT(playPrevious()));
     connect(_ui->artists, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showArtistsContextMenu(const QPoint &)));
     connect(_ui->albums, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showAlbumsContextMenu(const QPoint &)));
     connect(_ui->tracks, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showTracksContextMenu(const QPoint &)));
@@ -192,7 +217,9 @@ void Player::updateTracks()
 
 void Player::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
-    Q_UNUSED(reason);
+    if (reason == QSystemTrayIcon::Context)
+        return;
+
     if (this->isHidden())
         this->show();
     else this->hide();
@@ -227,6 +254,8 @@ void Player::stateChanged(Phonon::State newState, Phonon::State oldState)
     {
         _ui->playButton->show();
         _ui->pauseButton->hide();
+        _playAction->setVisible(true);
+        _pauseAction->setVisible(false);
     }
     else if (newState == Phonon::PlayingState)
     {
@@ -238,6 +267,8 @@ void Player::stateChanged(Phonon::State newState, Phonon::State oldState)
         _ui->artistLabel->setText(track->artist());
         _ui->playButton->hide();
         _ui->pauseButton->show();
+        _playAction->setVisible(false);
+        _pauseAction->setVisible(true);
         _trayIcon->setToolTip(QString("%1 - %2").arg(track->artist(), track->title()));
         //this->adjustSize();
     }
@@ -245,6 +276,8 @@ void Player::stateChanged(Phonon::State newState, Phonon::State oldState)
     {
         _ui->playButton->show();
         _ui->pauseButton->hide();
+        _playAction->setVisible(true);
+        _pauseAction->setVisible(false);
         QMessageBox::warning(this, tr("Error!"), _player->errorString());
     }
 }

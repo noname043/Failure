@@ -70,6 +70,13 @@ private:
     QMenu *_albumsMenu;
     QAction *_trackToPlaylistAction;
     QMenu *_tracksMenu;
+
+    QAction *_playAction;
+    QAction *_pauseAction;
+    QAction *_playNextAction;
+    QAction *_playPrevAction;
+    QAction *_stopAction;
+    QMenu *_trayMenu;
 };
 
 #endif // MAINWINDOW_H
