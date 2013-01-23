@@ -13,7 +13,7 @@
 #define ARTISTSFILE DATADIR + "/artists.dat"
 #define ALBUMSFILE  DATADIR + "/albums.dat"
 #define TRACKSFILE  DATADIR + "/tracks.dat"
-#define ALL         tr("All")
+#define ALL         tr(" -All- ")
 
 // DataBase consists of three files:
 // 1) artists.dat:

@@ -74,7 +74,9 @@ Player::Player(QWidget *parent):
     connect(_player, SIGNAL(finished()), this, SLOT(trackFinished()));
 
     _allArtists = _ui->artists->item(0);
+    _allArtists->setText(ALL);
     _allAlbums = _ui->albums->item(0);
+    _allAlbums->setText(ALL);
 
     loadPlaylist(RECENTPLAYLIST);
 }
