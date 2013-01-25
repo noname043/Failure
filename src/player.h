@@ -33,6 +33,7 @@ private slots:
 
     void playPrevious();
     void play();
+    void pause();
     void stop();
     void playNext();
 
@@ -73,6 +74,7 @@ private:
     QList<Track*> _libTracks;
     QList<Track*> _plistTracks;
     bool _isStopped;
+    bool _isPaused;
 
     QAction *_artistToPlaylistAction;
     QMenu *_artistsMenu;

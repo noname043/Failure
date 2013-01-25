@@ -14,6 +14,8 @@ Player::Player(QWidget *parent):
     _player(new Phonon::MediaObject(this)),
     _audioOutput(new Phonon::AudioOutput(Phonon::MusicCategory, this)),
     _trayIcon(new QSystemTrayIcon(this)),
+    _isStopped(false),
+    _isPaused(false),
     _artistToPlaylistAction(new QAction(tr("Add to playlist"), this)),
     _artistsMenu(new QMenu(this)),
     _albumToPlaylistAction(new QAction(tr("Add to playlist"), this)),
@@ -85,7 +87,7 @@ Player::Player(QWidget *parent):
     connect(_ui->tracks, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(play()));
     connect(_ui->playlist, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(play()));
     connect(_ui->stopButton, SIGNAL(clicked()), this, SLOT(stop()));
-    connect(_ui->pauseButton, SIGNAL(clicked()), _player, SLOT(pause()));
+    connect(_ui->pauseButton, SIGNAL(clicked()), this, SLOT(pause()));
     connect(_ui->stopButton, SIGNAL(clicked()), _player, SLOT(stop()));
     connect(_ui->previousButton, SIGNAL(clicked()), this, SLOT(playPrevious()));
     connect(_playAction, SIGNAL(triggered()), this, SLOT(play()));
@@ -247,7 +249,7 @@ void Player::trayIconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void Player::play()
 {
-    if (_player->state() != Phonon::PausedState)
+    if (!_isPaused)
     {
         //_playingNextOrPrev = false;
         if (_ui->tabWidget->currentWidget() == _ui->libraryTab)
@@ -265,6 +267,7 @@ void Player::play()
     }
     _player->play();
     _isStopped = false;
+    _isPaused = false;
 }
 
 void Player::stateChanged(Phonon::State newState, Phonon::State oldState)
@@ -332,6 +335,8 @@ void Player::tick(qint64 time)
 void Player::playPrevious()
 {
     stop();
+    _isPaused = false;
+
     int r;
     QTableWidget *widget = 0;
 //    QList<Track*> *playlist = 0;
@@ -359,6 +364,7 @@ void Player::playPrevious()
 void Player::playNext()
 {
     stop();
+    _isPaused = false;
 
     int r;
     QTableWidget *widget = 0;
@@ -547,4 +553,10 @@ void Player::lastFMUserChanged(QString user)
 void Player::lastFMSessionChanged(QString session)
 {
     lastfm::ws::SessionKey = session;
+}
+
+void Player::pause()
+{
+    _isPaused = true;
+    _player->pause();
 }
