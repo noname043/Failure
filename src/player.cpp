@@ -432,6 +432,9 @@ void Player::addToPlaylist(const Track *track)
     _ui->playlist->setItem(row, 2, item);
     item = new QTableWidgetItem(track->album());
     _ui->playlist->setItem(row, 3, item);
+
+    if (_ui->playlist->currentRow() < 0)
+        _ui->playlist->setCurrentCell(0, 0);
 }
 
 void Player::addToPlaylist(const QList<Track *> &tracks)
@@ -514,6 +517,7 @@ bool Player::loadPlaylist(const QString &fileName)
         }
     }
     file.close();
+    _ui->playlist->setCurrentCell(0, 0);
     return true;
 }
 
