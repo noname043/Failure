@@ -33,6 +33,7 @@ private slots:
 
     void playPrevious();
     void play();
+    void playSelected();
     void pause();
     void stop();
     void playNext();

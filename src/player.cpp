@@ -84,8 +84,8 @@ Player::Player(QWidget *parent):
     connect(_ui->actionSave_playlist, SIGNAL(triggered()), this, SLOT(savePlaylist()));
     connect(_ui->nextButton, SIGNAL(clicked()), this, SLOT(playNext()));
     connect(_ui->playButton, SIGNAL(clicked()), this, SLOT(play()));
-    connect(_ui->tracks, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(play()));
-    connect(_ui->playlist, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(play()));
+    connect(_ui->tracks, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(playSelected()));
+    connect(_ui->playlist, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(playSelected()));
     connect(_ui->stopButton, SIGNAL(clicked()), this, SLOT(stop()));
     connect(_ui->pauseButton, SIGNAL(clicked()), this, SLOT(pause()));
     connect(_ui->stopButton, SIGNAL(clicked()), _player, SLOT(stop()));
@@ -251,7 +251,6 @@ void Player::play()
 {
     if (!_isPaused)
     {
-        //_playingNextOrPrev = false;
         if (_ui->tabWidget->currentWidget() == _ui->libraryTab)
         {
             Phonon::MediaSource source(_libTracks[_ui->tracks->currentRow()]->fileName());
@@ -559,4 +558,10 @@ void Player::pause()
 {
     _isPaused = true;
     _player->pause();
+}
+
+void Player::playSelected()
+{
+    _isPaused = false;
+    play();
 }
