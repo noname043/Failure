@@ -17,12 +17,14 @@ public slots:
     void finishLogin();
     void logout();
 
-private slots:
     void setLoggedIn();
     void setLoggedOut();
 
+private slots:
     void tokenReceived(bool error);
     void sessionReceived(bool error);
+
+    void onClose();
 
 private:
     Ui::LastFMAuthDialog *_ui;

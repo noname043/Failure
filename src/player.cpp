@@ -110,8 +110,7 @@ Player::Player(QWidget *parent):
     connect(_player, SIGNAL(finished()), this, SLOT(trackFinished()));
     connect(_ui->actionSettings, SIGNAL(triggered()), _lastFMDialog, SLOT(show()));
     connect(_ui->actionScrobbling, SIGNAL(toggled(bool)), this, SLOT(scrobblingToggled(bool)));
-    connect(Settings::instance(), SIGNAL(lastFMUserChanged(QString)), this, SLOT(lastFMUserChanged(QString)));
-    connect(Settings::instance(), SIGNAL(lastFMSessionChanged(QString)), this, SLOT(lastFMSessionChanged(QString)));
+    connect(Settings::instance(), SIGNAL(scrobblingChanged(bool)), _ui->actionScrobbling, SLOT(setChecked(bool)));
 
     _allArtists = _ui->artists->item(0);
     _allArtists->setText(ALL);
@@ -122,6 +121,7 @@ Player::Player(QWidget *parent):
 
     _ui->actionScrobbling->setChecked(Settings::instance()->isScrobblingEnabled());
     _ui->actionSettings->setEnabled(Settings::instance()->isScrobblingEnabled());
+    scrobblingToggled(Settings::instance()->isScrobblingEnabled());
 }
 
 Player::~Player()
@@ -538,7 +538,10 @@ void Player::scrobblingToggled(bool enabled)
 
     if (enabled)
     {
+        if (Settings::instance()->lastFMUser().isEmpty() || Settings::instance()->lastFMSession().isEmpty())
+            _lastFMDialog->show();
         connect(_player, SIGNAL(prefinishMarkReached(qint32)), Scrobbler::instance(), SLOT(scrobble()));
+        connect(Scrobbler::instance(), SIGNAL(scrobblerError(int,QString)), this, SLOT(scrobblerError(int,QString)));
     }
     else
     {
@@ -546,16 +549,6 @@ void Player::scrobblingToggled(bool enabled)
         disconnect(_player, SIGNAL(prefinishMarkReached(qint32)), Scrobbler::instance(), SLOT(scrobble()));
         Scrobbler::destroy();
     }
-}
-
-void Player::lastFMUserChanged(QString user)
-{
-    lastfm::ws::Username = user;
-}
-
-void Player::lastFMSessionChanged(QString session)
-{
-    lastfm::ws::SessionKey = session;
 }
 
 void Player::pause()
@@ -568,4 +561,17 @@ void Player::playSelected()
 {
     _isPaused = false;
     play();
+}
+
+void Player::scrobblerError(int code, QString message)
+{
+    if (code == lastfm::ws::InvalidSessionKey)
+    {
+        _lastFMDialog->setLoggedOut();
+        _lastFMDialog->show();
+    }
+    else
+    {
+        QMessageBox::warning(this, tr("Scrobbling error!"), message);
+    }
 }

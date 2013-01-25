@@ -28,7 +28,7 @@ private slots:
     void onNowPlayingError(int code, QString message);
 
 signals:
-    void nowPlayingError(int code, QString message);
+    void scrobblerError(int code, QString message);
     
 private:
     static Scrobbler *_instance;

@@ -13,6 +13,7 @@ LastFMAuthDialog::LastFMAuthDialog(QWidget *parent):
     connect(_ui->loginButton, SIGNAL(clicked()), this, SLOT(login()));
     connect(_ui->finishLoginButton, SIGNAL(clicked()), this, SLOT(finishLogin()));
     connect(_ui->logoutButton, SIGNAL(clicked()), this, SLOT(logout()));
+    connect(_ui->closeButton, SIGNAL(clicked()), this, SLOT(onClose()));
     connect(_auth, SIGNAL(tokenReceived(bool)), this, SLOT(tokenReceived(bool)));
     connect(_auth, SIGNAL(sessionReceived(bool)), this, SLOT(sessionReceived(bool)));
 
@@ -43,6 +44,11 @@ void LastFMAuthDialog::setLoggedOut()
 
 void LastFMAuthDialog::login()
 {
+    if (_ui->username->text().isEmpty())
+    {
+        QMessageBox::warning(this, tr("Hola!"), tr("Your username, please!"));
+        return;
+    }
     if (!_auth->getToken(&_errorString))
         QMessageBox::warning(this, tr("Error!"), _errorString);
     else
@@ -96,4 +102,11 @@ void LastFMAuthDialog::logout()
 {
     setLoggedOut();
     Settings::instance()->setScroblingEnabled(false);
+}
+
+void LastFMAuthDialog::onClose()
+{
+    // When user is not properly logged in - turn off scrobbling.
+    if (!_ui->logoutButton->isEnabled())
+        logout();
 }

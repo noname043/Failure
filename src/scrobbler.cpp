@@ -70,5 +70,5 @@ void Scrobbler::setSession(QString session)
 
 void Scrobbler::onNowPlayingError(int code, QString message)
 {
-    emit nowPlayingError(code, message);
+    emit scrobblerError(code, message);
 }

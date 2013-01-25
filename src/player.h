@@ -56,9 +56,8 @@ private slots:
     //void removeTrack(Track *track);
 
     void scrobblingToggled(bool enabled);
-    void lastFMUserChanged(QString user);
-    void lastFMSessionChanged(QString session);
     //void scrobblePointReached();
+    void scrobblerError(int code, QString message);
 
 private:
     void fixHeader(QHeaderView *header);
