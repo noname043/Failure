@@ -7,6 +7,7 @@
 #include "progressdialog.h"
 #include "settings.h"
 #include "global.h"
+#include "scrobbler.h"
 
 Player::Player(QWidget *parent):
     QMainWindow(parent),
@@ -30,9 +31,7 @@ Player::Player(QWidget *parent):
     _playPrevAction(new QAction(tr("Play previous"), this)),
     _stopAction(new QAction(tr("Stop"), this)),
     _trayMenu(new QMenu(this)),
-    _lastFMDialog(new LastFMAuthDialog(this)),
-    _scrobbler(new lastfm::Audioscrobbler("tst")),
-    _lfmTrack(new lastfm::MutableTrack)
+    _lastFMDialog(new LastFMAuthDialog(this))
 {
     _ui->setupUi(this);
     this->setWindowIcon(QIcon(":/icon.png"));
@@ -130,10 +129,9 @@ Player::~Player()
     savePlaylist(RECENTPLAYLIST);
     delete _ui;
     delete _player;
+    Scrobbler::destroy();
     DataBase::destroy();
     Settings::destroy();
-    delete _scrobbler;
-    delete _lfmTrack;
 }
 
 void Player::fixHeader(QHeaderView *header)
@@ -316,13 +314,10 @@ void Player::totalTimeChanged(qint64 newTotalTime)
     if (_ui->tabWidget->currentWidget() == _ui->libraryTab)
         track = _libTracks[_ui->tracks->currentRow()];
     else track = _plistTracks[_ui->playlist->currentRow()];
-    _lfmTrack->setArtist(track->artist());
-    _lfmTrack->setAlbum(track->album());
-    _lfmTrack->setTitle(track->title());
-    _lfmTrack->setTrackNumber(track->track());
-    _lfmTrack->setDuration(newTotalTime/1000);
-    _lfmTrack->stamp();
-    _scrobbler->nowPlaying(*_lfmTrack);
+    track->setDuration(newTotalTime/1000);
+    int scrobblePoint = (track->duration()/2 < 4*60 ? track->duration()/2 : track->duration() - 4*60);
+    _player->setPrefinishMark((track->duration() - scrobblePoint) * 1000);
+    Scrobbler::instance()->nowPlaying(track);
 }
 
 void Player::tick(qint64 time)
@@ -461,12 +456,6 @@ void Player::trackFinished()
 {
     if (!_isStopped)
     {
-        if (Settings::instance()->isScrobblingEnabled())
-        {
-            _scrobbler->cache(*_lfmTrack);
-            _scrobbler->submit();
-            qDebug("Track scrobbled.");
-        }
         playNext();
     }
 }
@@ -542,6 +531,17 @@ void Player::showPlaylistContextMenu(const QPoint &point)
 void Player::scrobblingToggled(bool enabled)
 {
     Settings::instance()->setScroblingEnabled(enabled);
+
+    if (enabled)
+    {
+        connect(_player, SIGNAL(prefinishMarkReached(qint32)), Scrobbler::instance(), SLOT(scrobble()));
+    }
+    else
+    {
+        _player->setPrefinishMark(0);
+        disconnect(_player, SIGNAL(prefinishMarkReached(qint32)), Scrobbler::instance(), SLOT(scrobble()));
+        Scrobbler::destroy();
+    }
 }
 
 void Player::lastFMUserChanged(QString user)

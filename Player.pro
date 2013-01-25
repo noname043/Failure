@@ -22,7 +22,8 @@ SOURCES += src/main.cpp \
     src/progressdialog.cpp \
     src/lastfmauth.cpp \
     src/lastfmauthdialog.cpp \
-    src/settings.cpp
+    src/settings.cpp \
+    src/scrobbler.cpp
 
 HEADERS  += \
     src/player.h \
@@ -34,7 +35,8 @@ HEADERS  += \
     src/lastfmauth.h \
     src/lastfmauthdialog.h \
     src/settings.h \
-    src/global.h
+    src/global.h \
+    src/scrobbler.h
 
 FORMS    += \
     ui/player.ui \

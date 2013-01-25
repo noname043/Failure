@@ -18,11 +18,6 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 
-    lastfm::ws::ApiKey = APIKEY;
-    lastfm::ws::SharedSecret = APISECRET;
-    lastfm::ws::Username = Settings::instance()->lastFMUser();
-    lastfm::ws::SessionKey = Settings::instance()->lastFMSession();
-
     Player w;
     w.adjustSize();
     w.show();
