@@ -7,8 +7,8 @@
 #include <QListWidgetItem>
 #include <QSystemTrayIcon>
 #include <lastfm/ws.h>
-#include <lastfm/Audioscrobbler>
-#include <lastfm/MutableTrack>
+#include <lastfm/Audioscrobbler.h>
+#include <lastfm/Track.h>
 #include "ui_player.h"
 #include "track.h"
 #include "lastfmauthdialog.h"

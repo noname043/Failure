@@ -13,37 +13,37 @@ TEMPLATE = app
 
 LIBS += -ltag -llastfm
 
-SOURCES += main.cpp \
-    player.cpp \
-    stringmanager.cpp \
-    track.cpp \
-    database.cpp \
+SOURCES += src/main.cpp \
+    src/player.cpp \
+    src/stringmanager.cpp \
+    src/track.cpp \
+    src/database.cpp \
     mime/freedesktopmime.cpp \
-    progressdialog.cpp \
-    lastfmauth.cpp \
-    lastfmauthdialog.cpp \
-    settings.cpp
+    src/progressdialog.cpp \
+    src/lastfmauth.cpp \
+    src/lastfmauthdialog.cpp \
+    src/settings.cpp
 
 HEADERS  += \
-    player.h \
-    stringmanager.h \
-    track.h \
-    database.h \
+    src/player.h \
+    src/stringmanager.h \
+    src/track.h \
+    src/database.h \
     mime/freedesktopmime.h \
-    progressdialog.h \
-    lastfmauth.h \
-    lastfmauthdialog.h \
-    settings.h \
-    global.h
+    src/progressdialog.h \
+    src/lastfmauth.h \
+    src/lastfmauthdialog.h \
+    src/settings.h \
+    src/global.h
 
 FORMS    += \
-    player.ui \
-    progressdialog.ui \
-    lastfmauthdialog.ui
+    ui/player.ui \
+    ui/progressdialog.ui \
+    ui/lastfmauthdialog.ui
 
 RESOURCES += \
     mime/freedesktopmime.qrc \
-    res.qrc
+    res/res.qrc
 
 OTHER_FILES += \
     todo.txt \
