@@ -240,6 +240,8 @@ void DataBase::addDirectory(const QString &dirName)
     bool newTracks = false;
     Track *track = 0;
 
+    _doneDirs = 0;
+    _totalDirs = 0;
     fileNames.append(audioFilesFromSubDirs(dir));
     for (int i = 0; i < fileNames.size(); ++i)
     {
@@ -305,8 +307,12 @@ QStringList DataBase::audioFilesFromSubDirs(const QDir &dir)
 {
     QStringList files = audioFiles(dir);
     QStringList dirs = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    _totalDirs += dirs.size();
     for (int i = 0; i < dirs.size(); ++i)
+    {
         files.append(audioFilesFromSubDirs(QDir(QString("%1/%2").arg(dir.absolutePath(), dirs[i]))));
+        emit dirAddProgress(++_doneDirs, _totalDirs);
+    }
     return files;
 }
 

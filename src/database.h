@@ -104,6 +104,8 @@ private:
     QStringList _artists;
     QList<AlbumData*> _albums;
     QList<Track*> _tracks;
+    int _doneDirs;
+    int _totalDirs;
 };
 
 #endif // DATABASE_H

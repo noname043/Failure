@@ -154,6 +154,7 @@ void Player::addFilesToLibrary()
 {
     Track *track;
     ProgressDialog progress(this);
+    progress.adjustSize();
     progress.show();
     QStringList files = QFileDialog::getOpenFileNames(this, tr("Select files"));
     for (int i = 0; i < files.size(); ++i)
@@ -175,6 +176,7 @@ void Player::addDirToLibrary()
 
     ProgressDialog progressDialog(this);
     connect(DataBase::instance(), SIGNAL(dirAddProgress(int,int)), &progressDialog, SLOT(setValue(int,int)));
+    progressDialog.adjustSize();
     progressDialog.show();
     DataBase::instance()->addDirectory(dir);
     progressDialog.close();
